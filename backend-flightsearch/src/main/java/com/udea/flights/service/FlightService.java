@@ -10,40 +10,45 @@ import java.util.List;
 public class FlightService {
     @Autowired
     private FlightRepository flightRepository;
-
-    public List<Flight> findFlights(LocalDate startDate, LocalDate endDate, String origin, String destination, Double maxPrice) {
+    public List<Flight> findFlights(LocalDate startDate, LocalDate endDate, String origin, String destination, Boolean scale, String airline) {
         // Generar una clave de combinación de parámetros para usar en el switch
         String key = (origin != null ? "1" : "0") +
                 (destination != null ? "1" : "0") +
-                (maxPrice != null ? "1" : "0");
+                (scale != null ? "1" : "0") +
+                (airline != null ? "1" : "0");
 
         switch (key) {
-            case "111": // origin, destination, maxPrice no son nulos
-                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndPriceLessThanEqual(
-                        startDate, endDate, origin, destination, maxPrice);
-
-            case "110": // origin, destination no son nulos, maxPrice es nulo
-                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCase(
-                        startDate, endDate, origin, destination);
-
-            case "101": // origin y maxPrice no son nulos, destination es nulo
-                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndPriceLessThanEqual(
-                        startDate, endDate, origin, maxPrice);
-
-            case "011": // destination y maxPrice no son nulos, origin es nulo
-                return flightRepository.findByDateBetweenAndDestinationContainingIgnoreCaseAndPriceLessThanEqual(
-                        startDate, endDate, destination, maxPrice);
-
-            case "100": // solo origin no es nulo
+            case "1000":
                 return flightRepository.findByDateBetweenAndOriginContainingIgnoreCase(startDate, endDate, origin);
-
-            case "010": // solo destination no es nulo
+            case "0100":
                 return flightRepository.findByDateBetweenAndDestinationContainingIgnoreCase(startDate, endDate, destination);
-
-            case "001": // solo maxPrice no es nulo
-                return flightRepository.findByDateBetweenAndPriceLessThanEqual(startDate, endDate, maxPrice);
-
-            case "000": // todos son nulos
+            case "0010":
+                return flightRepository.findByDateBetweenAndScaleIs(startDate, endDate, scale);
+            case "0001":
+                return flightRepository.findByDateBetweenAndAirlineContainingIgnoreCase(startDate, endDate, airline);
+            case "1100":
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCase(startDate, endDate, origin, destination);
+            case "1010":
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndScaleIs(startDate, endDate, origin, scale);
+            case "1001":
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndAirlineContainingIgnoreCase(startDate, endDate, origin, airline);
+            case "0110":
+                return flightRepository.findByDateBetweenAndDestinationContainingIgnoreCaseAndScaleIs(startDate, endDate, destination, scale);
+            case "0101":
+                return flightRepository.findByDateBetweenAndDestinationContainingIgnoreCaseAndAirlineContainingIgnoreCase(startDate, endDate, destination, airline);
+            case "0011":
+                return flightRepository.findByDateBetweenAndScaleIsAndAirlineContainingIgnoreCase(startDate, endDate, scale, airline);
+            case "1110":
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndScaleIs(startDate, endDate, origin, destination, scale);
+            case "1101":
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndAirlineContainsIgnoreCase(startDate, endDate, origin, destination, airline);
+            case "1011":
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndScaleIsAndAirlineContainingIgnoreCase(startDate, endDate, origin, scale, airline);
+            case "0111":
+                return flightRepository.findByDateBetweenAndDestinationContainingIgnoreCaseAndScaleIsAndAirlineContainingIgnoreCase(startDate, endDate, destination, scale, airline);
+            case "1111":
+                return flightRepository.findByDateBetweenAndOriginContainingIgnoreCaseAndDestinationContainingIgnoreCaseAndScaleIsAndAirlineContainingIgnoreCase(startDate, endDate, origin, destination, scale, airline);
+            case "0000":
             default:
                 return flightRepository.findByDateBetween(startDate, endDate);
         }

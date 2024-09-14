@@ -17,8 +17,9 @@ public class FlightController {
                                       @RequestParam("endDate") String endDate,
                                       @RequestParam(value= "origin", required = false) String origin,
                                       @RequestParam(value= "destination", required = false) String destination,
-                                      @RequestParam(value= "maxPrice", required = false) Double maxPrice){
-        return flightService.findFlights(LocalDate.parse(startDate), LocalDate.parse(endDate), origin, destination, maxPrice);
+                                      @RequestParam(value= "scale", required = false) Boolean scale,
+                                      @RequestParam(value= "airline", required = false) String airline){
+        return flightService.findFlights(LocalDate.parse(startDate), LocalDate.parse(endDate), origin, destination, scale, airline);
 
     }
 }
